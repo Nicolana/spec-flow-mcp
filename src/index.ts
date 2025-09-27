@@ -2,6 +2,7 @@
 
 /**
  * Spec Flow MCP 服务器入口点
+ * 支持通过 npx 直接执行
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
