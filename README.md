@@ -55,37 +55,8 @@
    - 自信地处理大型代码库，从小团队扩展到数百名开发人员
    - 在所有项目中保持一致的 AI 辅助开发实践
 
-## 安装
-
-```bash
-pnpm install
-```
-
-## 开发
-
-```bash
-# 开发模式
-pnpm dev
-
-# 构建
-pnpm build
-
-# 生产运行
-pnpm start
-```
-
 ## 🚀 快速开始
 
-### 通过 npx 直接使用（推荐）
-```bash
-# 直接运行最新版本
-npx spec-flow-mcp@latest
-
-# 或者指定版本
-npx spec-flow-mcp@1.0.0
-```
-
-### 在 MCP 客户端中配置
 在支持 MCP 的 AI 编辑器（如 Cursor）的配置文件中添加：
 
 ```json
