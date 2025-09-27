@@ -34,16 +34,16 @@ export function getProjectRoot(): string {
 /**
  * 获取规范存储目录
  */
-export function getSpecsDirectory(): string {
-  const projectRoot = getProjectRoot();
-  return path.join(projectRoot, 'spec');
+export function getSpecsDirectory(projectRoot?: string): string {
+  const rootDir = projectRoot || getProjectRoot();
+  return path.join(rootDir, '.spec');
 }
 
 /**
  * 确保规范目录存在
  */
-export async function ensureSpecsDirectory(): Promise<string> {
-  const specsDir = getSpecsDirectory();
+export async function ensureSpecsDirectory(projectRoot?: string): Promise<string> {
+  const specsDir = getSpecsDirectory(projectRoot);
   await fs.ensureDir(specsDir);
   return specsDir;
 }
@@ -51,26 +51,26 @@ export async function ensureSpecsDirectory(): Promise<string> {
 /**
  * 获取规范文件路径
  */
-export function getSpecFilePath(specName: string, category: string = 'frontend'): string {
-  const specsDir = getSpecsDirectory();
+export function getSpecFilePath(specName: string, category: string = 'frontend', projectRoot?: string): string {
+  const specsDir = getSpecsDirectory(projectRoot);
   return path.join(specsDir, `${specName}_${category}_spec.md`);
 }
 
 /**
  * 检查规范文件是否存在
  */
-export async function specFileExists(specName: string, category: string = 'frontend'): Promise<boolean> {
-  const filePath = getSpecFilePath(specName, category);
+export async function specFileExists(specName: string, category: string = 'frontend', projectRoot?: string): Promise<boolean> {
+  const filePath = getSpecFilePath(specName, category, projectRoot);
   return fs.pathExists(filePath);
 }
 
 /**
  * 读取规范文件内容
  */
-export async function readSpecFile(specName: string, category: string = 'frontend'): Promise<string> {
-  const filePath = getSpecFilePath(specName, category);
+export async function readSpecFile(specName: string, category: string = 'frontend', projectRoot?: string): Promise<string> {
+  const filePath = getSpecFilePath(specName, category, projectRoot);
   
-  if (!await specFileExists(specName, category)) {
+  if (!await specFileExists(specName, category, projectRoot)) {
     throw new Error(`规范文件不存在: ${specName} (${category})`);
   }
   
@@ -83,10 +83,11 @@ export async function readSpecFile(specName: string, category: string = 'fronten
 export async function writeSpecFile(
   specName: string, 
   content: string, 
-  category: string = 'frontend'
+  category: string = 'frontend',
+  projectRoot?: string
 ): Promise<string> {
-  await ensureSpecsDirectory();
-  const filePath = getSpecFilePath(specName, category);
+  await ensureSpecsDirectory(projectRoot);
+  const filePath = getSpecFilePath(specName, category, projectRoot);
   await fs.writeFile(filePath, content, 'utf-8');
   return filePath;
 }
@@ -94,8 +95,8 @@ export async function writeSpecFile(
 /**
  * 列出所有规范文件
  */
-export async function listSpecFiles(): Promise<Array<{ name: string; category: string; file_path: string }>> {
-  const specsDir = getSpecsDirectory();
+export async function listSpecFiles(projectRoot?: string): Promise<Array<{ name: string; category: string; file_path: string }>> {
+  const specsDir = getSpecsDirectory(projectRoot);
   
   if (!await fs.pathExists(specsDir)) {
     return [];

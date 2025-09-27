@@ -10,7 +10,6 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { handleMCPMessage } from './core/mcpServer.js';
 import { logger } from './utils/logger.js';
-import { ensureSpecsDirectory } from './utils/fileSystem.js';
 
 /**
  * 创建并启动 MCP 服务器
@@ -18,10 +17,6 @@ import { ensureSpecsDirectory } from './utils/fileSystem.js';
 async function main() {
   try {
     logger.info('启动 Spec Flow MCP 服务器...');
-    
-    // 确保规范目录存在
-    const specsDir = await ensureSpecsDirectory();
-    logger.info(`规范存储目录: ${specsDir}`);
     
     // 创建 MCP 服务器
     const server = new Server(
@@ -55,9 +50,13 @@ async function main() {
                   enum: ['frontend', 'backend', 'mobile', 'design'],
                   default: 'frontend',
                   description: '规范分类'
+                },
+                projectRoot: {
+                  type: 'string',
+                  description: '项目根目录路径，规范将存储在 {projectRoot}/.spec 目录下'
                 }
               },
-              required: ['spec_name']
+              required: ['spec_name', 'projectRoot']
             }
           },
           {
@@ -65,7 +64,13 @@ async function main() {
             description: '列出所有可用的开发规范',
             inputSchema: {
               type: 'object',
-              properties: {}
+              properties: {
+                projectRoot: {
+                  type: 'string',
+                  description: '项目根目录路径，规范将存储在 {projectRoot}/.spec 目录下'
+                }
+              },
+              required: ['projectRoot']
             }
           },
           {
@@ -87,9 +92,13 @@ async function main() {
                   enum: ['frontend', 'backend', 'mobile', 'design'],
                   default: 'frontend',
                   description: '规范分类'
+                },
+                projectRoot: {
+                  type: 'string',
+                  description: '项目根目录路径，规范将存储在 {projectRoot}/.spec 目录下'
                 }
               },
-              required: ['spec_name', 'content']
+              required: ['spec_name', 'content', 'projectRoot']
             }
           },
           {
@@ -111,9 +120,13 @@ async function main() {
                   enum: ['frontend', 'backend', 'mobile', 'design'],
                   default: 'frontend',
                   description: '规范分类'
+                },
+                projectRoot: {
+                  type: 'string',
+                  description: '项目根目录路径，规范将存储在 {projectRoot}/.spec 目录下'
                 }
               },
-              required: ['spec_name', 'content']
+              required: ['spec_name', 'content', 'projectRoot']
             }
           }
         ]

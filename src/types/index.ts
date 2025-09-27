@@ -5,18 +5,25 @@
 export interface SpecRequest {
   spec_name: string;
   category?: 'frontend' | 'backend' | 'mobile' | 'design';
+  projectRoot: string;
 }
 
 export interface CreateSpecRequest {
   spec_name: string;
   content: string;
   category?: 'frontend' | 'backend' | 'mobile' | 'design';
+  projectRoot: string;
 }
 
 export interface EditSpecRequest {
   spec_name: string;
   content: string;
   category?: 'frontend' | 'backend' | 'mobile' | 'design';
+  projectRoot: string;
+}
+
+export interface ListSpecsRequest {
+  projectRoot: string;
 }
 
 export interface SpecResponse {

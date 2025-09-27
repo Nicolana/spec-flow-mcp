@@ -30,9 +30,13 @@ const MCP_TOOLS = [
           enum: ['frontend', 'backend', 'mobile', 'design'],
           default: 'frontend',
           description: '规范分类'
+        },
+        projectRoot: {
+          type: 'string',
+          description: '项目根目录路径，规范将存储在 {projectRoot}/.spec 目录下'
         }
       },
-      required: ['spec_name']
+      required: ['spec_name', 'projectRoot']
     }
   },
   {
@@ -40,7 +44,13 @@ const MCP_TOOLS = [
     description: '列出所有可用的开发规范',
     inputSchema: {
       type: 'object',
-      properties: {}
+      properties: {
+        projectRoot: {
+          type: 'string',
+          description: '项目根目录路径，规范将存储在 {projectRoot}/.spec 目录下'
+        }
+      },
+      required: ['projectRoot']
     }
   },
   {
@@ -62,9 +72,13 @@ const MCP_TOOLS = [
           enum: ['frontend', 'backend', 'mobile', 'design'],
           default: 'frontend',
           description: '规范分类'
+        },
+        projectRoot: {
+          type: 'string',
+          description: '项目根目录路径，规范将存储在 {projectRoot}/.spec 目录下'
         }
       },
-      required: ['spec_name', 'content']
+      required: ['spec_name', 'content', 'projectRoot']
     }
   },
   {
@@ -86,9 +100,13 @@ const MCP_TOOLS = [
           enum: ['frontend', 'backend', 'mobile', 'design'],
           default: 'frontend',
           description: '规范分类'
+        },
+        projectRoot: {
+          type: 'string',
+          description: '项目根目录路径，规范将存储在 {projectRoot}/.spec 目录下'
         }
       },
-      required: ['spec_name', 'content']
+      required: ['spec_name', 'content', 'projectRoot']
     }
   }
 ];
@@ -167,7 +185,8 @@ async function handleToolCall(
       case 'get_development_spec':
         const specResult = await getdevelopmentSpec({
           spec_name: toolArgs.spec_name || '',
-          category: toolArgs.category || 'frontend'
+          category: toolArgs.category || 'frontend',
+          projectRoot: toolArgs.projectRoot || ''
         });
         
         return {
@@ -184,7 +203,9 @@ async function handleToolCall(
         };
       
       case 'list_specs':
-        const listResult = await listAvailableSpecs();
+        const listResult = await listAvailableSpecs({
+          projectRoot: toolArgs.projectRoot || ''
+        });
         const specsList = listResult.specs
           .map(spec => `- ${spec.name} (${spec.category})`)
           .join('\n');
@@ -206,7 +227,8 @@ async function handleToolCall(
         const createResult = await createDevelopmentSpec({
           spec_name: toolArgs.spec_name || '',
           content: toolArgs.content || '',
-          category: toolArgs.category || 'frontend'
+          category: toolArgs.category || 'frontend',
+          projectRoot: toolArgs.projectRoot || ''
         });
         
         if (createResult.success) {
@@ -241,7 +263,8 @@ async function handleToolCall(
         const editResult = await editDevelopmentSpec({
           spec_name: toolArgs.spec_name || '',
           content: toolArgs.content || '',
-          category: toolArgs.category || 'frontend'
+          category: toolArgs.category || 'frontend',
+          projectRoot: toolArgs.projectRoot || ''
         });
         
         if (editResult.success) {
