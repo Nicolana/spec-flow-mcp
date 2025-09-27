@@ -123,7 +123,7 @@ async function main() {
     server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const { name, arguments: args } = request.params;
       
-      logger.debug(`工具调用: ${name}`, args);
+      logger.debug(`工具调用: ${name} - ${JSON.stringify(args)}`);
       
       // 构造 MCP 消息
       const mcpMessage = {
