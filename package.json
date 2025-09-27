@@ -36,8 +36,16 @@
     "cursor",
     "ai-assistant"
   ],
-  "author": "",
+  "author": "Nicolana <contact@flowspec.online>",
   "license": "MIT",
+  "homepage": "https://www.flowspec.online/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/specflow-ai/spec-flow-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/specflow-ai/spec-flow-mcp/issues"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
     "fs-extra": "^11.2.0",
