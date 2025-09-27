@@ -10,6 +10,7 @@
   "files": [
     "dist/**/*",
     "README.md",
+    "LICENSE",
     "package.json"
   ],
   "preferGlobal": false,
@@ -36,7 +37,7 @@
     "cursor",
     "ai-assistant"
   ],
-  "author": "Nicolana <contact@flowspec.online>",
+  "author": "Nicolana <nicolanazwj@gmail.com>",
   "license": "MIT",
   "homepage": "https://www.flowspec.online/",
   "repository": {
