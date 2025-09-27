@@ -1,0 +1,32 @@
+# Node.js
+node_modules/
+dist/
+build/
+.env
+.env.*
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.tsbuildinfo
+
+# Vite/VitePress
+.vitepress/dist/
+.vitepress/cache/
+.vitepress/.temp/
+.vitepress/.vitepress-cache/
+
+# VSCode
+.vscode/
+
+# Mac
+.DS_Store
+
+# 其他
+coverage/
+*.local
+*.log
+.idea/
+*.swp
+*.swo
+# End Generation Here
