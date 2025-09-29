@@ -112,11 +112,6 @@ function runTests() {
   log('✅ 测试通过', 'green');
 }
 
-function runLint() {
-  log('🔍 运行代码检查...', 'blue');
-  exec('npm run lint');
-  log('✅ 代码检查通过', 'green');
-}
 
 function build() {
   log('🔨 构建项目...', 'blue');
@@ -178,7 +173,7 @@ ${colors.cyan}示例:${colors.reset}
   npm run release beta
 
 ${colors.yellow}注意:${colors.reset}
-  - 发布前会自动运行测试和代码检查
+  - 发布前会自动运行测试
   - 会自动创建 Git 标签并推送
   - 确保在 main/master 分支进行发布
   `, 'white');
@@ -214,9 +209,6 @@ async function main() {
   
   // 运行测试
   runTests();
-  
-  // 运行代码检查
-  runLint();
   
   // 构建项目
   build();

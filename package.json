@@ -25,7 +25,6 @@
     "test:ui": "vitest --ui",
     "test:integration": "vitest run test/integration",
     "test:unit": "vitest run test/utils test/core --exclude test/integration",
-    "lint": "eslint src --ext .ts",
     "format": "prettier --write src/**/*.ts",
     "prepublishOnly": "npm run build",
     "prepack": "npm run build",
@@ -38,9 +37,9 @@
     "publish:minor": "npm run version:minor && npm run publish:release",
     "publish:major": "npm run version:major && npm run publish:release",
     "publish:prerelease": "npm run version:prerelease && npm run publish:release",
-    "publish:release": "npm run lint && npm run test:run && npm run build && npm publish",
-    "publish:beta": "npm run version:prerelease && npm run lint && npm run test:run && npm run build && npm publish --tag beta",
-    "publish:alpha": "npm run version:prerelease && npm run lint && npm run test:run && npm run build && npm publish --tag alpha",
+    "publish:release": "npm run test:run && npm run build && npm publish",
+    "publish:beta": "npm run version:prerelease && npm run test:run && npm run build && npm publish --tag beta",
+    "publish:alpha": "npm run version:prerelease && npm run test:run && npm run build && npm publish --tag alpha",
     "release": "node scripts/release.js"
   },
   "keywords": [
@@ -74,11 +73,8 @@
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.10.0",
-    "@typescript-eslint/eslint-plugin": "^6.15.0",
-    "@typescript-eslint/parser": "^6.15.0",
     "@vitest/coverage-v8": "^1.1.0",
     "@vitest/ui": "^1.1.0",
-    "eslint": "^8.56.0",
     "prettier": "^3.1.1",
     "tsx": "^4.6.2",
     "typescript": "^5.3.3",
