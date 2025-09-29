@@ -57,6 +57,20 @@ function getNextVersion(type) {
       return `${major}.${minor + 1}.0`;
     case 'patch':
       return `${major}.${minor}.${patch + 1}`;
+    case 'beta':
+      if (currentVersion.includes('-beta.')) {
+        const [baseVersion, prerelease] = currentVersion.split('-');
+        const prereleaseNumber = prerelease.split('.')[1];
+        return `${baseVersion}-beta.${parseInt(prereleaseNumber) + 1}`;
+      }
+      return `${currentVersion}-beta.1`;
+    case 'alpha':
+      if (currentVersion.includes('-alpha.')) {
+        const [baseVersion, prerelease] = currentVersion.split('-');
+        const prereleaseNumber = prerelease.split('.')[1];
+        return `${baseVersion}-alpha.${parseInt(prereleaseNumber) + 1}`;
+      }
+      return `${currentVersion}-alpha.1`;
     case 'prerelease':
       if (currentVersion.includes('-')) {
         const [baseVersion, prerelease] = currentVersion.split('-');
@@ -124,7 +138,19 @@ function updateVersion(type) {
   const nextVersion = getNextVersion(type);
   
   log(`📦 更新版本: ${currentVersion} → ${nextVersion}`, 'cyan');
-  exec(`npm version ${type} --no-git-tag-version`);
+  
+  // 将 beta/alpha 映射到 prerelease
+  const npmVersionType = type === 'beta' || type === 'alpha' ? 'prerelease' : type;
+  exec(`npm version ${npmVersionType} --no-git-tag-version`);
+  
+  // 如果是 beta/alpha，需要手动设置正确的版本号
+  if (type === 'beta' || type === 'alpha') {
+    const packageJsonPath = join(projectRoot, 'package.json');
+    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+    packageJson.version = nextVersion;
+    writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
+  }
+  
   log('✅ 版本更新完成', 'green');
   
   return nextVersion;
