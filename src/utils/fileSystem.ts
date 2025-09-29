@@ -44,7 +44,14 @@ export function getSpecsDirectory(projectRoot?: string): string {
  */
 export async function ensureSpecsDirectory(projectRoot?: string): Promise<string> {
   const specsDir = getSpecsDirectory(projectRoot);
-  await fs.ensureDir(specsDir);
+  try {
+    await fs.ensureDir(specsDir);
+  } catch (error) {
+    // 如果创建目录失败，尝试创建父目录
+    const parentDir = path.dirname(specsDir);
+    await fs.ensureDir(parentDir);
+    await fs.ensureDir(specsDir);
+  }
   return specsDir;
 }
 

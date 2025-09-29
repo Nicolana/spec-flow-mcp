@@ -31,15 +31,32 @@ const component = new MyComponent();
 `;
 
   beforeEach(async () => {
-    // 确保测试目录存在
+    // 确保测试目录存在并清理
     await fs.ensureDir(testProjectRoot);
+    const specsDir = path.join(testProjectRoot, '.spec');
+    if (await fs.pathExists(specsDir)) {
+      try {
+        await fs.remove(specsDir);
+      } catch (error) {
+        console.warn('清理测试目录失败，尝试强制删除:', error);
+        await fs.emptyDir(specsDir);
+        await fs.remove(specsDir);
+      }
+    }
   });
 
   afterEach(async () => {
     // 清理测试文件
     const specsDir = path.join(testProjectRoot, '.spec');
     if (await fs.pathExists(specsDir)) {
-      await fs.remove(specsDir);
+      try {
+        await fs.remove(specsDir);
+      } catch (error) {
+        // 如果删除失败，尝试强制删除
+        console.warn('清理集成测试目录失败，尝试强制删除:', error);
+        await fs.emptyDir(specsDir);
+        await fs.remove(specsDir);
+      }
     }
   });
 
