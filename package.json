@@ -1,6 +1,6 @@
 {
   "name": "spec-flow-mcp",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.1",
   "description": "AI Infra 开发规范治理工具 - MCP 服务",
   "main": "dist/index.js",
   "type": "module",
