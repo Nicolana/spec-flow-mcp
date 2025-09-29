@@ -93,6 +93,19 @@ export async function writeSpecFile(
 }
 
 /**
+ * 删除规范文件
+ */
+export async function deleteSpecFile(specName: string, category: string = 'frontend', projectRoot?: string): Promise<void> {
+  const filePath = getSpecFilePath(specName, category, projectRoot);
+  
+  if (!await specFileExists(specName, category, projectRoot)) {
+    throw new Error(`规范文件不存在: ${specName} (${category})`);
+  }
+  
+  await fs.remove(filePath);
+}
+
+/**
  * 列出所有规范文件
  */
 export async function listSpecFiles(projectRoot?: string): Promise<Array<{ name: string; category: string; file_path: string }>> {

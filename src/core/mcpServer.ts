@@ -7,6 +7,7 @@ import {
   getdevelopmentSpec, 
   createDevelopmentSpec, 
   editDevelopmentSpec, 
+  deleteDevelopmentSpec,
   listAvailableSpecs 
 } from './specService.js';
 import { logger } from '../utils/logger.js';
@@ -107,6 +108,30 @@ const MCP_TOOLS = [
         }
       },
       required: ['spec_name', 'content', 'projectRoot']
+    }
+  },
+  {
+    name: 'delete_development_spec',
+    description: '删除已存在的开发规范',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        spec_name: {
+          type: 'string',
+          description: '规范名称，必须是已存在的规范'
+        },
+        category: {
+          type: 'string',
+          enum: ['frontend', 'backend', 'mobile', 'design'],
+          default: 'frontend',
+          description: '规范分类'
+        },
+        projectRoot: {
+          type: 'string',
+          description: '项目根目录路径，规范将存储在 {projectRoot}/.spec 目录下'
+        }
+      },
+      required: ['spec_name', 'projectRoot']
     }
   }
 ];
@@ -295,6 +320,41 @@ async function handleToolCall(
           };
         }
       
+      case 'delete_development_spec':
+        const deleteResult = await deleteDevelopmentSpec({
+          spec_name: toolArgs.spec_name || '',
+          category: toolArgs.category || 'frontend',
+          projectRoot: toolArgs.projectRoot || ''
+        });
+        
+        if (deleteResult.success) {
+          return {
+            jsonrpc: '2.0',
+            id: requestId,
+            result: {
+              content: [
+                {
+                  type: 'text',
+                  text: `✅ 成功删除规范: ${deleteResult.spec_name}\n\n📋 规范信息：\n- 名称: ${deleteResult.spec_name}\n- 分类: ${deleteResult.category}\n- 操作: 删除\n- 状态: 已删除\n\n💡 提示：规范文件已从系统中永久删除，无法恢复。`
+                }
+              ]
+            }
+          };
+        } else {
+          return {
+            jsonrpc: '2.0',
+            id: requestId,
+            result: {
+              content: [
+                {
+                  type: 'text',
+                  text: `❌ ${deleteResult.message}\n\n💡 解决方案：\n1. 检查规范名称是否存在（删除功能只能删除现有规范）\n2. 确认分类参数是否正确\n3. 使用 list_specs 工具查看所有可用的规范`
+                }
+              ]
+            }
+          };
+        }
+      
       default:
         return {
           jsonrpc: '2.0',
@@ -320,7 +380,8 @@ async function handleToolCall(
             type: 'text',
             text: `❌ ${toolName === 'get_development_spec' ? '获取' : 
                        toolName === 'create_development_spec' ? '创建' : 
-                       toolName === 'edit_development_spec' ? '编辑' : ''}开发规范失败：${errorMessage}\n\n💡 解决方案：\n${
+                       toolName === 'edit_development_spec' ? '编辑' : 
+                       toolName === 'delete_development_spec' ? '删除' : ''}开发规范失败：${errorMessage}\n\n💡 解决方案：\n${
               isNotFoundError ? 
                 '1. 检查规范名称是否正确\n2. 确认规范文件是否存在\n3. 验证分类参数是否正确' :
                 '1. 检查规范名称和内容是否有效\n2. 确认服务是否正常运行\n3. 验证参数格式是否正确'

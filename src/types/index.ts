@@ -26,6 +26,12 @@ export interface ListSpecsRequest {
   projectRoot: string;
 }
 
+export interface DeleteSpecRequest {
+  spec_name: string;
+  category?: 'frontend' | 'backend' | 'mobile' | 'design';
+  projectRoot: string;
+}
+
 export interface SpecResponse {
   spec_name: string;
   content: string;

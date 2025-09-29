@@ -6,6 +6,7 @@ import {
   SpecRequest, 
   CreateSpecRequest, 
   EditSpecRequest, 
+  DeleteSpecRequest,
   ListSpecsRequest,
   SpecResponse, 
   SpecOperationResponse, 
@@ -14,6 +15,7 @@ import {
 import { 
   readSpecFile, 
   writeSpecFile, 
+  deleteSpecFile,
   specFileExists, 
   listSpecFiles,
   getSpecFilePath 
@@ -144,6 +146,50 @@ export async function editDevelopmentSpec(request: EditSpecRequest): Promise<Spe
     };
   } catch (error) {
     logger.error(`编辑规范失败: ${spec_name}`, error as Error);
+    throw error;
+  }
+}
+
+/**
+ * 删除开发规范
+ */
+export async function deleteDevelopmentSpec(request: DeleteSpecRequest): Promise<SpecOperationResponse> {
+  const { spec_name, category = 'frontend', projectRoot } = request;
+  
+  logger.info(`删除规范: ${spec_name} (${category}) - 项目路径: ${projectRoot}`);
+  
+  try {
+    if (!spec_name || spec_name.trim() === '') {
+      throw new Error('规范名称不能为空');
+    }
+    
+    if (!projectRoot || projectRoot.trim() === '') {
+      throw new Error('项目根目录不能为空');
+    }
+    
+    // 检查规范是否存在
+    if (!await specFileExists(spec_name, category, projectRoot)) {
+      return {
+        success: false,
+        message: `规范 "${spec_name}" 不存在，无法删除。`,
+        spec_name,
+        category
+      };
+    }
+    
+    // 删除规范文件
+    await deleteSpecFile(spec_name, category, projectRoot);
+    
+    logger.info(`成功删除规范: ${spec_name} (${category})`);
+    
+    return {
+      success: true,
+      message: `成功删除规范: ${spec_name}`,
+      spec_name,
+      category
+    };
+  } catch (error) {
+    logger.error(`删除规范失败: ${spec_name}`, error as Error);
     throw error;
   }
 }

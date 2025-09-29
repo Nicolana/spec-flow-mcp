@@ -128,6 +128,30 @@ async function main() {
               },
               required: ['spec_name', 'content', 'projectRoot']
             }
+          },
+          {
+            name: 'delete_development_spec',
+            description: '删除已存在的开发规范',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                spec_name: {
+                  type: 'string',
+                  description: '规范名称，必须是已存在的规范'
+                },
+                category: {
+                  type: 'string',
+                  enum: ['frontend', 'backend', 'mobile', 'design'],
+                  default: 'frontend',
+                  description: '规范分类'
+                },
+                projectRoot: {
+                  type: 'string',
+                  description: '项目根目录路径，规范将存储在 {projectRoot}/.spec 目录下'
+                }
+              },
+              required: ['spec_name', 'projectRoot']
+            }
           }
         ]
       };
