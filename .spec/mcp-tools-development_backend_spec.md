@@ -327,6 +327,30 @@ logger.error(`操作失败: ${operationName}`, error as Error);
 2. **参数扩展**：新增参数应设置合理默认值
 3. **废弃功能处理**：标记废弃功能并提供迁移指导
 
+## 实际项目示例
+
+基于 spec-flow-mcp 项目的四个核心工具：
+
+### 1. get_development_spec
+- **功能**: 获取指定开发规范内容
+- **参数**: spec_name, category, projectRoot
+- **特点**: 支持分类查找，返回完整规范内容
+
+### 2. list_specs  
+- **功能**: 列出所有可用开发规范
+- **参数**: projectRoot
+- **特点**: 返回规范列表和统计信息
+
+### 3. create_development_spec
+- **功能**: 创建新的开发规范
+- **参数**: spec_name, content, category, projectRoot
+- **特点**: 不允许覆盖已存在规范，确保数据安全
+
+### 4. edit_development_spec
+- **功能**: 编辑已存在的开发规范
+- **参数**: spec_name, content, category, projectRoot
+- **特点**: 只能修改现有规范，防止误操作
+
 ---
 
 本规范基于 spec-flow-mcp v1.0.0 制定，随项目演进持续更新。
