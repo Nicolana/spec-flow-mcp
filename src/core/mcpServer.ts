@@ -26,12 +26,6 @@ const MCP_TOOLS = [
           type: 'string',
           description: '规范名称，如：spttable, sptdrawer'
         },
-        category: {
-          type: 'string',
-          enum: ['frontend', 'backend', 'mobile', 'design'],
-          default: 'frontend',
-          description: '规范分类'
-        },
         projectRoot: {
           type: 'string',
           description: '项目根目录路径，规范将存储在 {projectRoot}/.spec 目录下'
@@ -68,12 +62,6 @@ const MCP_TOOLS = [
           type: 'string',
           description: '规范的完整内容（Markdown格式）'
         },
-        category: {
-          type: 'string',
-          enum: ['frontend', 'backend', 'mobile', 'design'],
-          default: 'frontend',
-          description: '规范分类'
-        },
         projectRoot: {
           type: 'string',
           description: '项目根目录路径，规范将存储在 {projectRoot}/.spec 目录下'
@@ -96,12 +84,6 @@ const MCP_TOOLS = [
           type: 'string',
           description: '规范的新内容（Markdown格式）'
         },
-        category: {
-          type: 'string',
-          enum: ['frontend', 'backend', 'mobile', 'design'],
-          default: 'frontend',
-          description: '规范分类'
-        },
         projectRoot: {
           type: 'string',
           description: '项目根目录路径，规范将存储在 {projectRoot}/.spec 目录下'
@@ -119,12 +101,6 @@ const MCP_TOOLS = [
         spec_name: {
           type: 'string',
           description: '规范名称，必须是已存在的规范'
-        },
-        category: {
-          type: 'string',
-          enum: ['frontend', 'backend', 'mobile', 'design'],
-          default: 'frontend',
-          description: '规范分类'
         },
         projectRoot: {
           type: 'string',
@@ -210,7 +186,6 @@ async function handleToolCall(
       case 'get_development_spec':
         const specResult = await getdevelopmentSpec({
           spec_name: toolArgs.spec_name || '',
-          category: toolArgs.category || 'frontend',
           projectRoot: toolArgs.projectRoot || ''
         });
         
@@ -221,7 +196,7 @@ async function handleToolCall(
             content: [
               {
                 type: 'text',
-                text: `# ${specResult.spec_name} 开发规范\n\n分类: ${specResult.category}\n\n${specResult.content}`
+                text: `# ${specResult.spec_name} 开发规范\n\n${specResult.content}`
               }
             ]
           }
@@ -232,7 +207,7 @@ async function handleToolCall(
           projectRoot: toolArgs.projectRoot || ''
         });
         const specsList = listResult.specs
-          .map(spec => `- ${spec.name} (${spec.category})`)
+          .map(spec => `- ${spec.name}`)
           .join('\n');
         
         return {
@@ -252,7 +227,6 @@ async function handleToolCall(
         const createResult = await createDevelopmentSpec({
           spec_name: toolArgs.spec_name || '',
           content: toolArgs.content || '',
-          category: toolArgs.category || 'frontend',
           projectRoot: toolArgs.projectRoot || ''
         });
         
@@ -264,7 +238,7 @@ async function handleToolCall(
               content: [
                 {
                   type: 'text',
-                  text: `✅ 成功创建规范: ${createResult.spec_name}\n\n📋 规范信息：\n- 名称: ${createResult.spec_name}\n- 分类: ${createResult.category}\n- 操作: 新建\n- 状态: 已保存\n\n💡 提示：使用 get_development_spec 工具可以查看新创建的规范内容。`
+                  text: `✅ 成功创建规范: ${createResult.spec_name}\n\n📋 规范信息：\n- 名称: ${createResult.spec_name}\n- 操作: 新建\n- 状态: 已保存\n\n💡 提示：使用 get_development_spec 工具可以查看新创建的规范内容。`
                 }
               ]
             }
@@ -288,7 +262,6 @@ async function handleToolCall(
         const editResult = await editDevelopmentSpec({
           spec_name: toolArgs.spec_name || '',
           content: toolArgs.content || '',
-          category: toolArgs.category || 'frontend',
           projectRoot: toolArgs.projectRoot || ''
         });
         
@@ -300,7 +273,7 @@ async function handleToolCall(
               content: [
                 {
                   type: 'text',
-                  text: `✅ 成功编辑规范: ${editResult.spec_name}\n\n📋 规范信息：\n- 名称: ${editResult.spec_name}\n- 分类: ${editResult.category}\n- 操作: 编辑\n- 状态: 已更新\n\n💡 提示：使用 get_development_spec 工具可以查看更新后的规范内容。`
+                  text: `✅ 成功编辑规范: ${editResult.spec_name}\n\n📋 规范信息：\n- 名称: ${editResult.spec_name}\n- 操作: 编辑\n- 状态: 已更新\n\n💡 提示：使用 get_development_spec 工具可以查看更新后的规范内容。`
                 }
               ]
             }
@@ -323,7 +296,6 @@ async function handleToolCall(
       case 'delete_development_spec':
         const deleteResult = await deleteDevelopmentSpec({
           spec_name: toolArgs.spec_name || '',
-          category: toolArgs.category || 'frontend',
           projectRoot: toolArgs.projectRoot || ''
         });
         
@@ -335,7 +307,7 @@ async function handleToolCall(
               content: [
                 {
                   type: 'text',
-                  text: `✅ 成功删除规范: ${deleteResult.spec_name}\n\n📋 规范信息：\n- 名称: ${deleteResult.spec_name}\n- 分类: ${deleteResult.category}\n- 操作: 删除\n- 状态: 已删除\n\n💡 提示：规范文件已从系统中永久删除，无法恢复。`
+                  text: `✅ 成功删除规范: ${deleteResult.spec_name}\n\n📋 规范信息：\n- 名称: ${deleteResult.spec_name}\n- 操作: 删除\n- 状态: 已删除\n\n💡 提示：规范文件已从系统中永久删除，无法恢复。`
                 }
               ]
             }
@@ -348,7 +320,7 @@ async function handleToolCall(
               content: [
                 {
                   type: 'text',
-                  text: `❌ ${deleteResult.message}\n\n💡 解决方案：\n1. 检查规范名称是否存在（删除功能只能删除现有规范）\n2. 确认分类参数是否正确\n3. 使用 list_specs 工具查看所有可用的规范`
+                  text: `❌ ${deleteResult.message}\n\n💡 解决方案：\n1. 检查规范名称是否存在（删除功能只能删除现有规范）\n2. 使用 list_specs 工具查看所有可用的规范`
                 }
               ]
             }
@@ -383,7 +355,7 @@ async function handleToolCall(
                        toolName === 'edit_development_spec' ? '编辑' : 
                        toolName === 'delete_development_spec' ? '删除' : ''}开发规范失败：${errorMessage}\n\n💡 解决方案：\n${
               isNotFoundError ? 
-                '1. 检查规范名称是否正确\n2. 确认规范文件是否存在\n3. 验证分类参数是否正确' :
+                '1. 检查规范名称是否正确\n2. 确认规范文件是否存在' :
                 '1. 检查规范名称和内容是否有效\n2. 确认服务是否正常运行\n3. 验证参数格式是否正确'
             }`
           }

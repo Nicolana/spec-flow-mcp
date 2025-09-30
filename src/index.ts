@@ -45,12 +45,6 @@ async function main() {
                   type: 'string',
                   description: '规范名称，如：spttable, sptdrawer'
                 },
-                category: {
-                  type: 'string',
-                  enum: ['frontend', 'backend', 'mobile', 'design'],
-                  default: 'frontend',
-                  description: '规范分类'
-                },
                 projectRoot: {
                   type: 'string',
                   description: '项目根目录路径，规范将存储在 {projectRoot}/.spec 目录下'
@@ -87,12 +81,6 @@ async function main() {
                   type: 'string',
                   description: '规范的完整内容（Markdown格式）'
                 },
-                category: {
-                  type: 'string',
-                  enum: ['frontend', 'backend', 'mobile', 'design'],
-                  default: 'frontend',
-                  description: '规范分类'
-                },
                 projectRoot: {
                   type: 'string',
                   description: '项目根目录路径，规范将存储在 {projectRoot}/.spec 目录下'
@@ -115,12 +103,6 @@ async function main() {
                   type: 'string',
                   description: '规范的新内容（Markdown格式）'
                 },
-                category: {
-                  type: 'string',
-                  enum: ['frontend', 'backend', 'mobile', 'design'],
-                  default: 'frontend',
-                  description: '规范分类'
-                },
                 projectRoot: {
                   type: 'string',
                   description: '项目根目录路径，规范将存储在 {projectRoot}/.spec 目录下'
@@ -138,12 +120,6 @@ async function main() {
                 spec_name: {
                   type: 'string',
                   description: '规范名称，必须是已存在的规范'
-                },
-                category: {
-                  type: 'string',
-                  enum: ['frontend', 'backend', 'mobile', 'design'],
-                  default: 'frontend',
-                  description: '规范分类'
                 },
                 projectRoot: {
                   type: 'string',

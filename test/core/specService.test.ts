@@ -34,7 +34,6 @@ import {
 describe('规范服务', () => {
   const testProjectRoot = TEST_TEMP_DIR;
   const testSpecName = 'test-spec';
-  const testCategory = 'frontend';
   const testContent = '# 测试规范\n\n这是一个测试规范文件。';
   const testFilePath = '/test/path/spec.md';
 
@@ -50,31 +49,17 @@ describe('规范服务', () => {
 
       const result = await getdevelopmentSpec({
         spec_name: testSpecName,
-        category: testCategory,
         projectRoot: testProjectRoot
       });
 
       expect(result).toEqual({
         spec_name: testSpecName,
         content: testContent,
-        category: testCategory,
         file_path: testFilePath
       });
 
-      expect(readSpecFile).toHaveBeenCalledWith(testSpecName, testCategory, testProjectRoot);
-      expect(getSpecFilePath).toHaveBeenCalledWith(testSpecName, testCategory, testProjectRoot);
-    });
-
-    it('应该使用默认分类', async () => {
-      vi.mocked(readSpecFile).mockResolvedValue(testContent);
-      vi.mocked(getSpecFilePath).mockReturnValue(testFilePath);
-
-      await getdevelopmentSpec({
-        spec_name: testSpecName,
-        projectRoot: testProjectRoot
-      });
-
-      expect(readSpecFile).toHaveBeenCalledWith(testSpecName, 'frontend', testProjectRoot);
+      expect(readSpecFile).toHaveBeenCalledWith(testSpecName, testProjectRoot);
+      expect(getSpecFilePath).toHaveBeenCalledWith(testSpecName, testProjectRoot);
     });
 
     it('应该在规范名称为空时抛出错误', async () => {
@@ -115,33 +100,17 @@ describe('规范服务', () => {
       const result = await createDevelopmentSpec({
         spec_name: testSpecName,
         content: testContent,
-        category: testCategory,
         projectRoot: testProjectRoot
       });
 
       expect(result).toEqual({
         success: true,
         message: `成功创建规范: ${testSpecName}`,
-        spec_name: testSpecName,
-        category: testCategory
+        spec_name: testSpecName
       });
 
-      expect(specFileExists).toHaveBeenCalledWith(testSpecName, testCategory, testProjectRoot);
-      expect(writeSpecFile).toHaveBeenCalledWith(testSpecName, testContent, testCategory, testProjectRoot);
-    });
-
-    it('应该使用默认分类', async () => {
-      vi.mocked(specFileExists).mockResolvedValue(false);
-      vi.mocked(writeSpecFile).mockResolvedValue(testFilePath);
-
-      await createDevelopmentSpec({
-        spec_name: testSpecName,
-        content: testContent,
-        projectRoot: testProjectRoot
-      });
-
-      expect(specFileExists).toHaveBeenCalledWith(testSpecName, 'frontend', testProjectRoot);
-      expect(writeSpecFile).toHaveBeenCalledWith(testSpecName, testContent, 'frontend', testProjectRoot);
+      expect(specFileExists).toHaveBeenCalledWith(testSpecName, testProjectRoot);
+      expect(writeSpecFile).toHaveBeenCalledWith(testSpecName, testContent, testProjectRoot);
     });
 
     it('应该拒绝覆盖已存在的规范', async () => {
@@ -150,15 +119,13 @@ describe('规范服务', () => {
       const result = await createDevelopmentSpec({
         spec_name: testSpecName,
         content: testContent,
-        category: testCategory,
         projectRoot: testProjectRoot
       });
 
       expect(result).toEqual({
         success: false,
         message: `规范 "${testSpecName}" 已存在，创建功能不允许覆盖现有规范。如需修改，请使用编辑功能。`,
-        spec_name: testSpecName,
-        category: testCategory
+        spec_name: testSpecName
       });
 
       expect(writeSpecFile).not.toHaveBeenCalled();
@@ -204,33 +171,17 @@ describe('规范服务', () => {
       const result = await editDevelopmentSpec({
         spec_name: testSpecName,
         content: newContent,
-        category: testCategory,
         projectRoot: testProjectRoot
       });
 
       expect(result).toEqual({
         success: true,
         message: `成功编辑规范: ${testSpecName}`,
-        spec_name: testSpecName,
-        category: testCategory
+        spec_name: testSpecName
       });
 
-      expect(specFileExists).toHaveBeenCalledWith(testSpecName, testCategory, testProjectRoot);
-      expect(writeSpecFile).toHaveBeenCalledWith(testSpecName, newContent, testCategory, testProjectRoot);
-    });
-
-    it('应该使用默认分类', async () => {
-      vi.mocked(specFileExists).mockResolvedValue(true);
-      vi.mocked(writeSpecFile).mockResolvedValue(testFilePath);
-
-      await editDevelopmentSpec({
-        spec_name: testSpecName,
-        content: testContent,
-        projectRoot: testProjectRoot
-      });
-
-      expect(specFileExists).toHaveBeenCalledWith(testSpecName, 'frontend', testProjectRoot);
-      expect(writeSpecFile).toHaveBeenCalledWith(testSpecName, testContent, 'frontend', testProjectRoot);
+      expect(specFileExists).toHaveBeenCalledWith(testSpecName, testProjectRoot);
+      expect(writeSpecFile).toHaveBeenCalledWith(testSpecName, newContent, testProjectRoot);
     });
 
     it('应该拒绝编辑不存在的规范', async () => {
@@ -239,15 +190,13 @@ describe('规范服务', () => {
       const result = await editDevelopmentSpec({
         spec_name: testSpecName,
         content: testContent,
-        category: testCategory,
         projectRoot: testProjectRoot
       });
 
       expect(result).toEqual({
         success: false,
         message: `规范 "${testSpecName}" 不存在，编辑功能只能修改现有规范。如需创建新规范，请使用创建功能。`,
-        spec_name: testSpecName,
-        category: testCategory
+        spec_name: testSpecName
       });
 
       expect(writeSpecFile).not.toHaveBeenCalled();
@@ -291,32 +240,17 @@ describe('规范服务', () => {
 
       const result = await deleteDevelopmentSpec({
         spec_name: testSpecName,
-        category: testCategory,
         projectRoot: testProjectRoot
       });
 
       expect(result).toEqual({
         success: true,
         message: `成功删除规范: ${testSpecName}`,
-        spec_name: testSpecName,
-        category: testCategory
+        spec_name: testSpecName
       });
 
-      expect(specFileExists).toHaveBeenCalledWith(testSpecName, testCategory, testProjectRoot);
-      expect(deleteSpecFile).toHaveBeenCalledWith(testSpecName, testCategory, testProjectRoot);
-    });
-
-    it('应该使用默认分类', async () => {
-      vi.mocked(specFileExists).mockResolvedValue(true);
-      vi.mocked(deleteSpecFile).mockResolvedValue();
-
-      await deleteDevelopmentSpec({
-        spec_name: testSpecName,
-        projectRoot: testProjectRoot
-      });
-
-      expect(specFileExists).toHaveBeenCalledWith(testSpecName, 'frontend', testProjectRoot);
-      expect(deleteSpecFile).toHaveBeenCalledWith(testSpecName, 'frontend', testProjectRoot);
+      expect(specFileExists).toHaveBeenCalledWith(testSpecName, testProjectRoot);
+      expect(deleteSpecFile).toHaveBeenCalledWith(testSpecName, testProjectRoot);
     });
 
     it('应该拒绝删除不存在的规范', async () => {
@@ -324,15 +258,13 @@ describe('规范服务', () => {
 
       const result = await deleteDevelopmentSpec({
         spec_name: testSpecName,
-        category: testCategory,
         projectRoot: testProjectRoot
       });
 
       expect(result).toEqual({
         success: false,
         message: `规范 "${testSpecName}" 不存在，无法删除。`,
-        spec_name: testSpecName,
-        category: testCategory
+        spec_name: testSpecName
       });
 
       expect(deleteSpecFile).not.toHaveBeenCalled();
@@ -360,9 +292,9 @@ describe('规范服务', () => {
   describe('listAvailableSpecs', () => {
     it('应该成功列出所有规范', async () => {
       const mockSpecs = [
-        { name: 'spec1', category: 'frontend', file_path: '/path/spec1.md' },
-        { name: 'spec2', category: 'backend', file_path: '/path/spec2.md' },
-        { name: 'spec3', category: 'mobile', file_path: '/path/spec3.md' }
+        { name: 'spec1', file_path: '/path/spec1.md' },
+        { name: 'spec2', file_path: '/path/spec2.md' },
+        { name: 'spec3', file_path: '/path/spec3.md' }
       ];
 
       vi.mocked(listSpecFiles).mockResolvedValue(mockSpecs);

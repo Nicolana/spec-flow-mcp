@@ -12,7 +12,6 @@ import path from 'path';
 describe('MCP 服务器集成测试', () => {
   const testProjectRoot = TEST_TEMP_DIR;
   const testSpecName = 'integration-test-spec';
-  const testCategory = 'frontend';
   const testContent = `# 集成测试规范
 
 ## 概述
@@ -101,7 +100,6 @@ const component = new MyComponent();
           arguments: {
             spec_name: uniqueSpecName,
             content: testContent,
-            category: testCategory,
             projectRoot: testProjectRoot
           }
         }
@@ -114,7 +112,7 @@ const component = new MyComponent();
       // 4. 验证规范已创建（通过列表）
       const listAfterCreateResponse = await handleMCPMessage(listMessage);
       expect(listAfterCreateResponse.result?.content[0].text).toContain('总计: 1 个规范');
-      expect(listAfterCreateResponse.result?.content[0].text).toContain(`${uniqueSpecName} (${testCategory})`);
+      expect(listAfterCreateResponse.result?.content[0].text).toContain(`- ${uniqueSpecName}`);
 
       // 5. 获取规范内容
       const getMessage = {
@@ -125,7 +123,6 @@ const component = new MyComponent();
           name: 'get_development_spec',
           arguments: {
             spec_name: uniqueSpecName,
-            category: testCategory,
             projectRoot: testProjectRoot
           }
         }
@@ -147,7 +144,6 @@ const component = new MyComponent();
           arguments: {
             spec_name: uniqueSpecName,
             content: updatedContent,
-            category: testCategory,
             projectRoot: testProjectRoot
           }
         }
@@ -170,7 +166,6 @@ const component = new MyComponent();
           name: 'delete_development_spec',
           arguments: {
             spec_name: uniqueSpecName,
-            category: testCategory,
             projectRoot: testProjectRoot
           }
         }
@@ -185,13 +180,13 @@ const component = new MyComponent();
       expect(listAfterDeleteResponse.result?.content[0].text).toContain('总计: 0 个规范');
     });
 
-    it('应该能够处理多个分类的规范', async () => {
+    it('应该能够处理多个规范', async () => {
       const timestamp = Date.now();
       const specs = [
-        { name: `frontend-spec-${timestamp}`, category: 'frontend', content: '# 前端规范\n\n前端开发规范。' },
-        { name: `backend-spec-${timestamp}`, category: 'backend', content: '# 后端规范\n\n后端开发规范。' },
-        { name: `mobile-spec-${timestamp}`, category: 'mobile', content: '# 移动端规范\n\n移动端开发规范。' },
-        { name: `design-spec-${timestamp}`, category: 'design', content: '# 设计规范\n\n设计开发规范。' }
+        { name: `frontend-spec-${timestamp}`, content: '# 前端规范\n\n前端开发规范。' },
+        { name: `backend-spec-${timestamp}`, content: '# 后端规范\n\n后端开发规范。' },
+        { name: `mobile-spec-${timestamp}`, content: '# 移动端规范\n\n移动端开发规范。' },
+        { name: `design-spec-${timestamp}`, content: '# 设计规范\n\n设计开发规范。' }
       ];
 
       // 创建多个规范
@@ -205,7 +200,6 @@ const component = new MyComponent();
             arguments: {
               spec_name: spec.name,
               content: spec.content,
-              category: spec.category,
               projectRoot: testProjectRoot
             }
           }
@@ -231,9 +225,9 @@ const component = new MyComponent();
       const listResponse = await handleMCPMessage(listMessage);
       expect(listResponse.result?.content[0].text).toContain('总计: 4 个规范');
 
-      // 验证每个分类的规范都存在
+      // 验证每个规范都存在
       for (const spec of specs) {
-        expect(listResponse.result?.content[0].text).toContain(`${spec.name} (${spec.category})`);
+        expect(listResponse.result?.content[0].text).toContain(`- ${spec.name}`);
       }
 
       // 获取每个规范的内容
@@ -244,11 +238,10 @@ const component = new MyComponent();
           method: 'tools/call',
           params: {
             name: 'get_development_spec',
-            arguments: {
-              spec_name: spec.name,
-              category: spec.category,
-              projectRoot: testProjectRoot
-            }
+          arguments: {
+            spec_name: spec.name,
+            projectRoot: testProjectRoot
+          }
           }
         };
 
@@ -269,7 +262,6 @@ const component = new MyComponent();
           name: 'get_development_spec',
           arguments: {
             spec_name: 'non-existent-spec',
-            category: testCategory,
             projectRoot: testProjectRoot
           }
         }
@@ -288,7 +280,6 @@ const component = new MyComponent();
           arguments: {
             spec_name: 'non-existent-spec',
             content: 'new content',
-            category: testCategory,
             projectRoot: testProjectRoot
           }
         }
@@ -307,7 +298,6 @@ const component = new MyComponent();
           name: 'delete_development_spec',
           arguments: {
             spec_name: 'non-existent-spec',
-            category: testCategory,
             projectRoot: testProjectRoot
           }
         }
@@ -327,7 +317,6 @@ const component = new MyComponent();
           arguments: {
             spec_name: uniqueSpecName,
             content: testContent,
-            category: testCategory,
             projectRoot: testProjectRoot
           }
         }

@@ -58,27 +58,27 @@ export async function ensureSpecsDirectory(projectRoot?: string): Promise<string
 /**
  * 获取规范文件路径
  */
-export function getSpecFilePath(specName: string, category: string = 'frontend', projectRoot?: string): string {
+export function getSpecFilePath(specName: string, projectRoot?: string): string {
   const specsDir = getSpecsDirectory(projectRoot);
-  return path.join(specsDir, `${specName}_${category}_spec.md`);
+  return path.join(specsDir, `${specName}_spec.md`);
 }
 
 /**
  * 检查规范文件是否存在
  */
-export async function specFileExists(specName: string, category: string = 'frontend', projectRoot?: string): Promise<boolean> {
-  const filePath = getSpecFilePath(specName, category, projectRoot);
+export async function specFileExists(specName: string, projectRoot?: string): Promise<boolean> {
+  const filePath = getSpecFilePath(specName, projectRoot);
   return fs.pathExists(filePath);
 }
 
 /**
  * 读取规范文件内容
  */
-export async function readSpecFile(specName: string, category: string = 'frontend', projectRoot?: string): Promise<string> {
-  const filePath = getSpecFilePath(specName, category, projectRoot);
+export async function readSpecFile(specName: string, projectRoot?: string): Promise<string> {
+  const filePath = getSpecFilePath(specName, projectRoot);
   
-  if (!await specFileExists(specName, category, projectRoot)) {
-    throw new Error(`规范文件不存在: ${specName} (${category})`);
+  if (!await specFileExists(specName, projectRoot)) {
+    throw new Error(`规范文件不存在: ${specName}`);
   }
   
   return fs.readFile(filePath, 'utf-8');
@@ -90,11 +90,10 @@ export async function readSpecFile(specName: string, category: string = 'fronten
 export async function writeSpecFile(
   specName: string, 
   content: string, 
-  category: string = 'frontend',
   projectRoot?: string
 ): Promise<string> {
   await ensureSpecsDirectory(projectRoot);
-  const filePath = getSpecFilePath(specName, category, projectRoot);
+  const filePath = getSpecFilePath(specName, projectRoot);
   await fs.writeFile(filePath, content, 'utf-8');
   return filePath;
 }
@@ -102,11 +101,11 @@ export async function writeSpecFile(
 /**
  * 删除规范文件
  */
-export async function deleteSpecFile(specName: string, category: string = 'frontend', projectRoot?: string): Promise<void> {
-  const filePath = getSpecFilePath(specName, category, projectRoot);
+export async function deleteSpecFile(specName: string, projectRoot?: string): Promise<void> {
+  const filePath = getSpecFilePath(specName, projectRoot);
   
-  if (!await specFileExists(specName, category, projectRoot)) {
-    throw new Error(`规范文件不存在: ${specName} (${category})`);
+  if (!await specFileExists(specName, projectRoot)) {
+    throw new Error(`规范文件不存在: ${specName}`);
   }
   
   await fs.remove(filePath);
@@ -115,7 +114,7 @@ export async function deleteSpecFile(specName: string, category: string = 'front
 /**
  * 列出所有规范文件
  */
-export async function listSpecFiles(projectRoot?: string): Promise<Array<{ name: string; category: string; file_path: string }>> {
+export async function listSpecFiles(projectRoot?: string): Promise<Array<{ name: string; file_path: string }>> {
   const specsDir = getSpecsDirectory(projectRoot);
   
   if (!await fs.pathExists(specsDir)) {
@@ -126,15 +125,14 @@ export async function listSpecFiles(projectRoot?: string): Promise<Array<{ name:
   const specFiles = files.filter(file => file.endsWith('_spec.md'));
   
   return specFiles.map(file => {
-    const match = file.match(/^(.+)_([^_]+)_spec\.md$/);
+    const match = file.match(/^(.+)_spec\.md$/);
     if (match) {
-      const [, name, category] = match;
+      const [, name] = match;
       return {
         name,
-        category,
         file_path: path.join(specsDir, file)
       };
     }
     return null;
-  }).filter(Boolean) as Array<{ name: string; category: string; file_path: string }>;
+  }).filter(Boolean) as Array<{ name: string; file_path: string }>;
 }

@@ -26,7 +26,6 @@ import {
 describe('MCP 服务器', () => {
   const testProjectRoot = TEST_TEMP_DIR;
   const testSpecName = 'test-spec';
-  const testCategory = 'frontend';
   const testContent = '# 测试规范\n\n这是一个测试规范文件。';
 
   beforeEach(() => {
@@ -96,7 +95,6 @@ describe('MCP 服务器', () => {
           const mockSpecResponse = {
             spec_name: testSpecName,
             content: testContent,
-            category: testCategory,
             file_path: '/test/path/spec.md'
           };
 
@@ -110,7 +108,6 @@ describe('MCP 服务器', () => {
               name: 'get_development_spec',
               arguments: {
                 spec_name: testSpecName,
-                category: testCategory,
                 projectRoot: testProjectRoot
               }
             }
@@ -128,7 +125,6 @@ describe('MCP 服务器', () => {
 
           expect(getdevelopmentSpec).toHaveBeenCalledWith({
             spec_name: testSpecName,
-            category: testCategory,
             projectRoot: testProjectRoot
           });
         });
@@ -164,8 +160,8 @@ describe('MCP 服务器', () => {
           const mockListResponse = {
             total: 2,
             specs: [
-              { name: 'spec1', category: 'frontend', file_path: '/path/spec1.md' },
-              { name: 'spec2', category: 'backend', file_path: '/path/spec2.md' }
+              { name: 'spec1', file_path: '/path/spec1.md' },
+              { name: 'spec2', file_path: '/path/spec2.md' }
             ]
           };
 
@@ -190,8 +186,8 @@ describe('MCP 服务器', () => {
           expect(response.result).toBeDefined();
           expect(response.result.content[0].text).toContain('可用的开发规范列表');
           expect(response.result.content[0].text).toContain('总计: 2 个规范');
-          expect(response.result.content[0].text).toContain('spec1 (frontend)');
-          expect(response.result.content[0].text).toContain('spec2 (backend)');
+          expect(response.result.content[0].text).toContain('- spec1');
+          expect(response.result.content[0].text).toContain('- spec2');
 
           expect(listAvailableSpecs).toHaveBeenCalledWith({
             projectRoot: testProjectRoot
@@ -204,8 +200,7 @@ describe('MCP 服务器', () => {
           const mockCreateResponse = {
             success: true,
             message: `成功创建规范: ${testSpecName}`,
-            spec_name: testSpecName,
-            category: testCategory
+            spec_name: testSpecName
           };
 
           vi.mocked(createDevelopmentSpec).mockResolvedValue(mockCreateResponse);
@@ -219,7 +214,6 @@ describe('MCP 服务器', () => {
               arguments: {
                 spec_name: testSpecName,
                 content: testContent,
-                category: testCategory,
                 projectRoot: testProjectRoot
               }
             }
@@ -236,7 +230,6 @@ describe('MCP 服务器', () => {
           expect(createDevelopmentSpec).toHaveBeenCalledWith({
             spec_name: testSpecName,
             content: testContent,
-            category: testCategory,
             projectRoot: testProjectRoot
           });
         });
@@ -245,8 +238,7 @@ describe('MCP 服务器', () => {
           const mockCreateResponse = {
             success: false,
             message: `规范 "${testSpecName}" 已存在`,
-            spec_name: testSpecName,
-            category: testCategory
+            spec_name: testSpecName
           };
 
           vi.mocked(createDevelopmentSpec).mockResolvedValue(mockCreateResponse);
@@ -280,8 +272,7 @@ describe('MCP 服务器', () => {
           const mockEditResponse = {
             success: true,
             message: `成功编辑规范: ${testSpecName}`,
-            spec_name: testSpecName,
-            category: testCategory
+            spec_name: testSpecName
           };
 
           vi.mocked(editDevelopmentSpec).mockResolvedValue(mockEditResponse);
@@ -295,7 +286,6 @@ describe('MCP 服务器', () => {
               arguments: {
                 spec_name: testSpecName,
                 content: testContent,
-                category: testCategory,
                 projectRoot: testProjectRoot
               }
             }
@@ -312,7 +302,6 @@ describe('MCP 服务器', () => {
           expect(editDevelopmentSpec).toHaveBeenCalledWith({
             spec_name: testSpecName,
             content: testContent,
-            category: testCategory,
             projectRoot: testProjectRoot
           });
         });
@@ -321,8 +310,7 @@ describe('MCP 服务器', () => {
           const mockEditResponse = {
             success: false,
             message: `规范 "${testSpecName}" 不存在`,
-            spec_name: testSpecName,
-            category: testCategory
+            spec_name: testSpecName
           };
 
           vi.mocked(editDevelopmentSpec).mockResolvedValue(mockEditResponse);
@@ -356,8 +344,7 @@ describe('MCP 服务器', () => {
           const mockDeleteResponse = {
             success: true,
             message: `成功删除规范: ${testSpecName}`,
-            spec_name: testSpecName,
-            category: testCategory
+            spec_name: testSpecName
           };
 
           vi.mocked(deleteDevelopmentSpec).mockResolvedValue(mockDeleteResponse);
@@ -370,7 +357,6 @@ describe('MCP 服务器', () => {
               name: 'delete_development_spec',
               arguments: {
                 spec_name: testSpecName,
-                category: testCategory,
                 projectRoot: testProjectRoot
               }
             }
@@ -386,7 +372,6 @@ describe('MCP 服务器', () => {
 
           expect(deleteDevelopmentSpec).toHaveBeenCalledWith({
             spec_name: testSpecName,
-            category: testCategory,
             projectRoot: testProjectRoot
           });
         });
@@ -395,8 +380,7 @@ describe('MCP 服务器', () => {
           const mockDeleteResponse = {
             success: false,
             message: `规范 "${testSpecName}" 不存在`,
-            spec_name: testSpecName,
-            category: testCategory
+            spec_name: testSpecName
           };
 
           vi.mocked(deleteDevelopmentSpec).mockResolvedValue(mockDeleteResponse);
