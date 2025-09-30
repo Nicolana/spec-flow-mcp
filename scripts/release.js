@@ -48,29 +48,59 @@ function getCurrentVersion() {
 
 function getNextVersion(type) {
   const currentVersion = getCurrentVersion();
-  const [major, minor, patch] = currentVersion.split('.').map(Number);
   
   switch (type) {
     case 'major':
-      return `${major + 1}.0.0`;
+      if (currentVersion.includes('-')) {
+        const [baseVersion] = currentVersion.split('-');
+        const [major, minor, patch] = baseVersion.split('.').map(Number);
+        return `${major + 1}.0.0`;
+      } else {
+        const [major, minor, patch] = currentVersion.split('.').map(Number);
+        return `${major + 1}.0.0`;
+      }
     case 'minor':
-      return `${major}.${minor + 1}.0`;
+      if (currentVersion.includes('-')) {
+        const [baseVersion] = currentVersion.split('-');
+        const [major, minor, patch] = baseVersion.split('.').map(Number);
+        return `${major}.${minor + 1}.0`;
+      } else {
+        const [major, minor, patch] = currentVersion.split('.').map(Number);
+        return `${major}.${minor + 1}.0`;
+      }
     case 'patch':
-      return `${major}.${minor}.${patch + 1}`;
+      if (currentVersion.includes('-')) {
+        const [baseVersion] = currentVersion.split('-');
+        const [major, minor, patch] = baseVersion.split('.').map(Number);
+        return `${major}.${minor}.${patch + 1}`;
+      } else {
+        const [major, minor, patch] = currentVersion.split('.').map(Number);
+        return `${major}.${minor}.${patch + 1}`;
+      }
     case 'beta':
       if (currentVersion.includes('-beta.')) {
         const [baseVersion, prerelease] = currentVersion.split('-');
         const prereleaseNumber = prerelease.split('.')[1];
         return `${baseVersion}-beta.${parseInt(prereleaseNumber) + 1}`;
+      } else if (currentVersion.includes('-')) {
+        // 如果已经是其他预发布版本，先提取基础版本
+        const [baseVersion] = currentVersion.split('-');
+        return `${baseVersion}-beta.1`;
+      } else {
+        return `${currentVersion}-beta.1`;
       }
-      return `${currentVersion}-beta.1`;
     case 'alpha':
       if (currentVersion.includes('-alpha.')) {
         const [baseVersion, prerelease] = currentVersion.split('-');
         const prereleaseNumber = prerelease.split('.')[1];
         return `${baseVersion}-alpha.${parseInt(prereleaseNumber) + 1}`;
+      } else if (currentVersion.includes('-')) {
+        // 如果已经是其他预发布版本，先提取基础版本
+        const [baseVersion] = currentVersion.split('-');
+        return `${baseVersion}-alpha.1`;
+      } else {
+        return `${currentVersion}-alpha.1`;
       }
-      return `${currentVersion}-alpha.1`;
     case 'prerelease':
       if (currentVersion.includes('-')) {
         const [baseVersion, prerelease] = currentVersion.split('-');
@@ -139,17 +169,11 @@ function updateVersion(type) {
   
   log(`📦 更新版本: ${currentVersion} → ${nextVersion}`, 'cyan');
   
-  // 将 beta/alpha 映射到 prerelease
-  const npmVersionType = type === 'beta' || type === 'alpha' ? 'prerelease' : type;
-  exec(`npm version ${npmVersionType} --no-git-tag-version`);
-  
-  // 如果是 beta/alpha，需要手动设置正确的版本号
-  if (type === 'beta' || type === 'alpha') {
-    const packageJsonPath = join(projectRoot, 'package.json');
-    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
-    packageJson.version = nextVersion;
-    writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
-  }
+  // 直接更新 package.json 中的版本号
+  const packageJsonPath = join(projectRoot, 'package.json');
+  const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+  packageJson.version = nextVersion;
+  writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
   
   log('✅ 版本更新完成', 'green');
   
