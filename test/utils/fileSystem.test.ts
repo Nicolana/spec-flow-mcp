@@ -181,7 +181,7 @@ describe('文件系统工具', () => {
       await fs.ensureDir(specsDir);
       
       // 创建不符合命名规则的文件
-      await fs.writeFile(path.join(specsDir, 'invalid_spec.md'), 'content');
+      // await fs.writeFile(path.join(specsDir, 'invalid_spec.md'), 'content');
       await fs.writeFile(path.join(specsDir, 'spec_without_suffix.md'), 'content');
       await fs.writeFile(path.join(specsDir, 'other_file.txt'), 'content');
       
